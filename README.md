@@ -66,7 +66,7 @@ def tinkerPatchTask = project.tasks.findByName("tinkerPatch${taskName.capitalize
         }
 ```
 
-**原理：**由于tinkerPatch task无法进行拆分，只能在打包时插入资源混淆的任务，在完成后将tinkerPatchTask所指向的`buildApkPath`进行变更，这样才能达到对资源混淆包的对比。
+**原理：** 由于tinkerPatch task无法进行拆分，只能在打包时插入资源混淆的任务，在完成后将tinkerPatchTask所指向的`buildApkPath`进行变更，这样才能达到对资源混淆包的对比。
 
 * 取消对混淆的支持
 
@@ -159,7 +159,7 @@ task buildTinkerSdk(type: Copy, dependsOn: [clean, shadowJar])
 
   若基准包目录格式更改可更改此处，目前基准包的要求为：
 
-  ![image-20201205211944831](/Users/ilckiss/Downloads/BuglyHotfix-AndResDemo/README.assets/image-20201205211944831.png)
+  ![image-20201205211944831](./README.assets/image-20201205211944831.png)
 
   需要用到的文件（必不可缺）：图中红框选中文件，混淆结果`mapping,txt`、混淆后的apk `some-app-resguard.apk`。
 
@@ -221,17 +221,17 @@ newApk = ""
 
 **基准包格式：**（需要R文件，以往包不适用）
 
-![image-20201205213103047](/Users/ilckiss/Downloads/BuglyHotfix-AndResDemo/README.assets/image-20201205213103047.png)
+![image-20201205213103047](./README.assets/image-20201205213103047.png)
 
 补丁包生成涉及文件：混淆结果`mapping,txt`、混淆后的apk `some-app-resguard.apk`、以及`R.txt`
 
 打补丁包：
 
-![image-20201205213209029](/Users/ilckiss/Downloads/BuglyHotfix-AndResDemo/README.assets/image-20201205213209029.png)
+![image-20201205213209029](./README.assets/image-20201205213209029.png)
 
 运行完成，则会拷贝至`out/最新基准包版本/patch_signed_7zip.apk`
 
-![image-20201205213233546](/Users/ilckiss/Downloads/BuglyHotfix-AndResDemo/README.assets/image-20201205213233546.png)
+![image-20201205213233546](./README.assets/image-20201205213233546.png)
 
 **这种方式生成的支持 Bugly 管理。**
 
@@ -281,7 +281,7 @@ python3 tinker-patch.py -d path/to/BuglyHotfix-AndResDemo/out
 
 运行完成会按旧基准包名称存放。
 
-![image-20201205215357282](/Users/ilckiss/Downloads/BuglyHotfix-AndResDemo/README.assets/image-20201205215357282.png)
+![image-20201205215357282](./README.assets/image-20201205215357282.png)
 
 **注意：即便只有一个基准包，也需要包括在一个目录中，且基准包文件格式以及相对路径必须符合上图**（或者自行修改匹配规则）
 
@@ -305,7 +305,7 @@ python .\tinker-patch.py -d path\to\out -n path\to\new.apk
 
 out目录图例：
 
-![image-20201205215845796](/Users/ilckiss/Downloads/BuglyHotfix-AndResDemo/README.assets/image-20201205215845796.png)
+![image-20201205215845796](./README.assets/image-20201205215845796.png)
 
 需要用到的文件：图中红框选中文件，混淆结果`mapping,txt`、混淆后的apk `some-app-resguard.apk`。
 
@@ -313,7 +313,7 @@ out目录图例：
 
 执行命令后，将会在`tinkercli/patch`生成对应版本的补丁包，格式如下：
 
-![image-20201205220453188](/Users/ilckiss/Downloads/BuglyHotfix-AndResDemo/README.assets/image-20201205220453188.png)
+![image-20201205220453188](./README.assets/image-20201205220453188.png)
 
 生成补丁包后需进行另存管理，否则下次对同样基准包处理时将被覆盖。
 
