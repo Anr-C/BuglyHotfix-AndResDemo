@@ -1,0 +1,78 @@
+project.afterEvaluate {
+    android.applicationVariants.all { variant ->
+        def taskName = variant.name
+        def versionName = variant.versionName
+        println("====>>> taskName:${taskName} versionName:${versionName}")
+
+        //每次 tinker 都会备份 apk， 会导致空间占用很大 每次构建先删除
+        delete "${rootProject.ext.autoBakPath}"
+
+        //debug 不进行任何处理
+        if (!"$taskName".contains("release")) return
+
+        def resGuardTask = project.tasks.findByName("resguard${taskName.capitalize()}")
+        if (resGuardTask) {
+            //备份当前混淆包
+            resGuardTask.doLast {
+                copy {
+                    def buildOutDir = "${buildDir.absolutePath}/outputs/apk/${taskName}"
+                    def bakResGuardDir = "${rootDir.absolutePath}/out/${rootProject.ext.outputFileName}"
+                    from("${buildOutDir}/AndResGuard_${rootProject.ext.outputFileName}") {
+                        include("${rootProject.ext.outputFileName}_7zip_aligned_signed.apk")
+                        include("resource_mapping_${rootProject.ext.outputFileName}.txt")
+                    }
+                    from("${buildDir}/intermediates/symbols/release/R.txt")
+                    from "${buildDir}/outputs/mapping/${taskName}/mapping.txt"
+                    into file(bakResGuardDir)
+                    rename("R.txt", "${rootProject.ext.outputFileName}-R.txt")
+                    rename("${rootProject.ext.outputFileName}_7zip_aligned_signed.apk", "${rootProject.ext.outputFileName}-resguard.apk")
+                    rename("resource_mapping_${rootProject.ext.outputFileName}.txt", "${rootProject.ext.outputFileName}-resource_mapping.txt")
+                }
+            }
+        } else {
+            println("resGuardTask not found")
+            return
+        }
+
+        def tinkerPatchTask = project.tasks.findByName("tinkerPatch${taskName.capitalize()}")
+        if (tinkerPatchTask) {
+            //region 关键代码
+            tinkerPatchTask.doFirst {
+                def buildOutDir = "${buildDir.absolutePath}/outputs/apk/${taskName}"
+                def buildApkPath = "${buildOutDir}/AndResGuard_${rootProject.ext.outputFileName}/${rootProject.ext.outputFileName}_7zip_aligned_signed.apk"
+                println("change tinkerPatchTask buildApkPath to resugurad output ${buildApkPath}")
+                //替换tinker release产生的apk 为res混淆后的 apk
+                if (!"${rootProject.ext.newApk}".isEmpty()) {
+                    //替换为指定 apk
+                    tinkerPatchTask.buildApkPath = "${rootProject.ext.newApk}"
+                } else {
+                    tinkerPatchTask.buildApkPath = buildApkPath
+                }
+            }
+            tinkerPatchTask.dependsOn resGuardTask
+        } else {
+            println("tinkerPatchTask not found")
+            return
+        }
+        //region end关键代码
+
+        def buildTinkerPatchTask = project.tasks.findByName("buildTinkerPatch${taskName.capitalize()}")
+        if (buildTinkerPatchTask) {
+            buildTinkerPatchTask.doLast {
+                copy {
+                    //删除一切tinker自动备份包括当前新基线包（已自行备份）
+                    delete "${rootProject.ext.autoBakPath}"
+                    //复制补丁到 out 目录下 以基准包名称分别存放
+                    def patchApkPath = "${buildDir}/outputs/patch/${taskName}/patch_signed_7zip.apk"
+                    def patchOutPath = "${rootDir}/out/patchs/${outputFileName}"
+                    from patchApkPath
+                    into file(patchOutPath)
+                    println("change tinkerPatchTask patchApkPath to resugurad output from: \n ${patchApkPath} \n  to: \n ${patchOutPath} \n")
+                }
+            }
+        } else {
+            println("buildTinkerPatchTask not found")
+            return
+        }
+    }
+}

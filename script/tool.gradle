@@ -1,0 +1,29 @@
+/**
+ * 打包
+ */
+
+/**
+ * 打包并混淆
+ */
+task releaseAndResGuard(group: 'release', description: 'release and resguard',dependsOn: ['clean', 'resguardRelease'] ){
+
+    doFirst {
+        //do something
+    }
+
+    doLast {
+        //do something
+    }
+}
+
+/**
+ * 命令行批量打补丁 项目根目录/tinker-patch.py
+ */
+task initDir {
+    def baseDir = project.getProperties().get('multiApkDir')
+    def newApkPath = project.getProperties().get('newApkPath')
+    if (baseDir == null) return
+    rootProject.ext.baseDir = baseDir
+    println "===>start baseDir:${baseDir} newApkPath:${newApkPath} "
+    rootProject.ext.newApk = newApkPath == null ? "" : newApkPath
+}

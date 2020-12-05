@@ -1,0 +1,50 @@
+rootProject.ext {
+    // ----- 应用内配置 ----- //
+    buglyAppId = "e0b1ba785f"
+    //设置是否开启热更新能力，默认为true
+    enableHotfix = true
+    // 设置是否自动下载补丁，默认为true
+    canAutoDownloadPatch = true
+    // 设置是否自动合成补丁，默认为true
+    canAutoPatch = true
+    // 设置是否提示用户重启，默认为false
+    canNotifyUserRestart = true
+
+    // ----- 脚本配置 ----- //
+    //是否基于加固包生成补丁/生成基准包
+    isProtectedApp = false
+    //自动备份目录 暂不需要
+    autoBakPath = file("${buildDir}/bakApk/")
+
+    //此处填写每次需要进行补丁构建的基准包目录
+    baseDir = "${rootDir}/out/some-app_2.0_3_20201205173139"
+    //用于指定新基准包 不使用编译时生成的基准包（tinker 每次任务都会重新生成一个）
+    newApk = ""
+
+
+    // --- 其他配置 ---//
+    apkName = "some-app"
+
+    lib7zip = '1.2.20'
+
+    //以下变量自动填写 无需理会
+    outputFileName = ""
+    baseApkPath = ""
+    baseApkResourceMappingPath = ""
+    baseApkProguardMappingPath = ""
+}
+
+android {
+    applicationVariants.all { variant ->
+        variant.outputs.forEach {
+            def outputFileName = "${apkName}_${variant.versionName}_${variant.versionCode}_${apkOutTime()}"
+            println("===>" + outputFileName)
+            rootProject.ext.outputFileName = outputFileName
+            it.apkData.outputFileName = outputFileName + ".apk"
+        }
+    }
+}
+
+static def apkOutTime() {
+    return new Date().format("yyyyMMddHHmmss", TimeZone.getTimeZone("GMT+08:00"))
+}
