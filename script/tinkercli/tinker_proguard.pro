@@ -1,4 +1,4 @@
--applymapping path/to/mapping.txt
+-applymapping /Users/ilckiss/Downloads/BuglyHotfix-AndResDemo/out/some-app_2.0_3_20201205213040/mapping.txt 
 
 -keepattributes *Annotation*
 -dontwarn com.tencent.tinker.anno.AnnotationProcessor

@@ -4,6 +4,7 @@ import sys, os
 import subprocess
 import getopt
 import shutil
+import platform
 
 multi_apk_dir = ''
 new_apk = ''
@@ -35,7 +36,7 @@ def release_patch(mapping, old_path, new_path):
     f.writelines(proguard_f)
 
     patch_cmd = 'java -jar ./tinker-patch-cli-1.9.14.9-all.jar -old ' + old_path + ' -new ' + new_path + ' -config tinker_config.xml -out out'
-    p = subprocess.Popen(patch_cmd, shell=False, stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
+    p = subprocess.Popen(patch_cmd, shell=(platform.system() != "Windows"), stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
     while p.poll() is None:
         line = p.stdout.readline()
         line = line.strip()
@@ -49,7 +50,10 @@ def release_patch(mapping, old_path, new_path):
 
 #用于复制补丁
 def copy_patch(base_name):
-    patch_path = os.getcwd() + '/out/patch_signed_7zip.apk'
+    if platform.system() == "Windows":
+        patch_path = os.getcwd() + '/out/patch_signed_7zip.apk'
+    else:
+        patch_path = os.getcwd() + '/out/patch_signed.apk'
     out_patch_dir = os.getcwd() + '/patch/' + base_name
     out_patch = out_patch_dir + '/patch_signed_7zip.apk'
     if not os.path.exists(out_patch_dir):

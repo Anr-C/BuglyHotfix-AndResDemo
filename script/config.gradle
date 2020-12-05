@@ -17,7 +17,7 @@ rootProject.ext {
     autoBakPath = file("${buildDir}/bakApk/")
 
     //此处填写每次需要进行补丁构建的基准包目录
-    baseDir = "${rootDir}/out/some-app_2.0_3_20201205173139"
+    baseDir = "${rootDir}/out/some-app_2.0_3_20201205211902"
     //用于指定新基准包 不使用编译时生成的基准包（tinker 每次任务都会重新生成一个）
     newApk = ""
 

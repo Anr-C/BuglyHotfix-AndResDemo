@@ -36,7 +36,7 @@ def release_patch(old_path):
     if new_apk == '':
         patch_cmd = cmd_head + ' app:initDir -PmultiApkDir=' + old_path + ' app:buildTinkerPatchRelease'  # --info
     else:
-        patch_cmd = cmd_head + ' gradlew app:initDir -PmultiApkDir=' + old_path + ' -PnewApkPath=' + new_apk + ' app:buildTinkerPatchRelease'  # --info
+        patch_cmd = cmd_head + ' app:initDir -PmultiApkDir=' + old_path + ' -PnewApkPath=' + new_apk + ' app:buildTinkerPatchRelease'  # --info
 
     print("patch_cmd: "+patch_cmd)
     

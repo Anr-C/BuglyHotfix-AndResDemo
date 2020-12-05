@@ -12,21 +12,23 @@ project.afterEvaluate {
 
         def resGuardTask = project.tasks.findByName("resguard${taskName.capitalize()}")
         if (resGuardTask) {
-            //备份当前混淆包
-            resGuardTask.doLast {
-                copy {
-                    def buildOutDir = "${buildDir.absolutePath}/outputs/apk/${taskName}"
-                    def bakResGuardDir = "${rootDir.absolutePath}/out/${rootProject.ext.outputFileName}"
-                    from("${buildOutDir}/AndResGuard_${rootProject.ext.outputFileName}") {
-                        include("${rootProject.ext.outputFileName}_7zip_aligned_signed.apk")
-                        include("resource_mapping_${rootProject.ext.outputFileName}.txt")
+            //当前没有指定最新基准包时，才备份即时编译的混淆包
+            if ("${rootProject.ext.newApk}".isEmpty()) {
+                resGuardTask.doLast {
+                    copy {
+                        def buildOutDir = "${buildDir.absolutePath}/outputs/apk/${taskName}"
+                        def bakResGuardDir = "${rootDir.absolutePath}/out/${rootProject.ext.outputFileName}"
+                        from("${buildOutDir}/AndResGuard_${rootProject.ext.outputFileName}") {
+                            include("${rootProject.ext.outputFileName}_7zip_aligned_signed.apk")
+                            include("resource_mapping_${rootProject.ext.outputFileName}.txt")
+                        }
+                        from("${buildDir}/intermediates/symbols/release/R.txt")
+                        from "${buildDir}/outputs/mapping/${taskName}/mapping.txt"
+                        into file(bakResGuardDir)
+                        rename("R.txt", "${rootProject.ext.outputFileName}-R.txt")
+                        rename("${rootProject.ext.outputFileName}_7zip_aligned_signed.apk", "${rootProject.ext.outputFileName}-resguard.apk")
+                        rename("resource_mapping_${rootProject.ext.outputFileName}.txt", "${rootProject.ext.outputFileName}-resource_mapping.txt")
                     }
-                    from("${buildDir}/intermediates/symbols/release/R.txt")
-                    from "${buildDir}/outputs/mapping/${taskName}/mapping.txt"
-                    into file(bakResGuardDir)
-                    rename("R.txt", "${rootProject.ext.outputFileName}-R.txt")
-                    rename("${rootProject.ext.outputFileName}_7zip_aligned_signed.apk", "${rootProject.ext.outputFileName}-resguard.apk")
-                    rename("resource_mapping_${rootProject.ext.outputFileName}.txt", "${rootProject.ext.outputFileName}-resource_mapping.txt")
                 }
             }
         } else {
@@ -64,7 +66,12 @@ project.afterEvaluate {
                     delete "${rootProject.ext.autoBakPath}"
                     //复制补丁到 out 目录下 以基准包名称分别存放
                     def patchApkPath = "${buildDir}/outputs/patch/${taskName}/patch_signed_7zip.apk"
-                    def patchOutPath = "${rootDir}/out/patchs/${outputFileName}"
+                    def patchOutPath
+                    if ("${rootProject.ext.newApk}".isEmpty()) {
+                        patchOutPath = "${rootDir}/out/patchs/${outputFileName}"
+                    }else {
+                        patchOutPath = "${rootDir}/out/patchs/${file(rootProject.ext.baseDir).name}"
+                    }
                     from patchApkPath
                     into file(patchOutPath)
                     println("change tinkerPatchTask patchApkPath to resugurad output from: \n ${patchApkPath} \n  to: \n ${patchOutPath} \n")
