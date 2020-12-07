@@ -11,9 +11,9 @@ android {
         buildConfigField "Boolean", "CAN_AUTODOWNLOAD_PATCH", "${rootProject.ext.canAutoDownloadPatch}"
         buildConfigField "Boolean", "CAN_AUTOPATCH", "${rootProject.ext.canAutoPatch}"
         buildConfigField "Boolean", "CAN_NOTIFY_USER_RESTART", "${rootProject.ext.canNotifyUserRestart}"
+        buildConfigField "String", "TINKER_ID", "\"${rootProject.ext.tinkerId}\""
     }
 }
-
 
 def fillBaseApkPath() {
     rootProject.ext.baseApkProguardMappingPath = "${rootProject.ext.baseDir}/mapping.txt"
@@ -46,9 +46,12 @@ tinkerSupport {
     autoBackupApkDir = "${rootProject.ext.autoBakPath}"
     //建议设置true,用户就不用再自己管理tinkerId的命名,插件会为每一次构建的base包自动生成唯一的tinkerId，默认命名规则是versionname.versioncode_时间戳
     //具体参考https://github.com/BuglyDevTeam/Bugly-Android-Demo/wiki/Tinker-ID%E8%AF%A5%E6%80%8E%E4%B9%88%E8%AE%BE%E7%BD%AE
-    autoGenerateTinkerId = true
+    autoGenerateTinkerId = false
     //tinkerId必须保证唯一性，如果两个base包的tinkerid是一样的，并且都联网激活了，那么后续补丁上传到后台的时候会出现匹配错误
-    tinkerId = "if autoGenerateTinkerId=true ,no need set here"
+    tinkerId = rootProject.ext.tinkerId
+
+    //不希望被更新的类
+    dexLoader += ["com.tencent.bugly.hotfix.info.BaseBuildInfo"]
 
     // 是否启用覆盖tinkerPatch配置功能，默认值false
     // 开启后tinkerPatch配置不生效，即无需添加tinkerPatch
@@ -112,6 +115,7 @@ tinkerPatch {
 
 //        path = "/usr/local/bin/7za"
     }
+
     buildConfig {
         keepDexApply = false
         //tinkerId = "1.0.1-patch"

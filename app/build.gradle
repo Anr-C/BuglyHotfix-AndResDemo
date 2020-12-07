@@ -56,8 +56,8 @@ android {
         applicationId "com.tencent.bugly.hotfix"
         minSdkVersion 15
         targetSdkVersion 28
-        versionCode 3
-        versionName "2.0"
+        versionCode rootProject.ext.versionCode
+        versionName rootProject.ext.versionName
 
         // 开启multidex
         multiDexEnabled true

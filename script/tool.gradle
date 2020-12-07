@@ -16,6 +16,7 @@ task releaseAndResGuard(group: 'release', description: 'release and resguard',de
     }
 }
 
+
 /**
  * 命令行批量打补丁 项目根目录/tinker-patch.py
  */
@@ -24,6 +25,19 @@ task initDir {
     def newApkPath = project.getProperties().get('newApkPath')
     if (baseDir == null) return
     rootProject.ext.baseDir = baseDir
-    println "===>start baseDir:${baseDir} newApkPath:${newApkPath} "
     rootProject.ext.newApk = newApkPath == null ? "" : newApkPath
+    println "===>start baseDir:${baseDir} newApkPath:${newApkPath} "
 }
+
+/*task patchSingle(dependsOn: ['clean', 'buildTinkerPatchRelease']) {
+    def baseApk="some_app_old"
+    def newApk ="some_app_new"
+    def subFix = "E:/test/pkg/"
+
+    def baseDir = subFix + baseApk
+    def newApkPath = subFix+"${newApk}/${newApk}-resguard.apk"
+    if (baseDir == null) return
+    rootProject.ext.baseDir = baseDir
+    rootProject.ext.newApk = newApkPath == null ? "" : newApkPath
+    println "===>start baseDir:${baseDir} newApkPath:${newApkPath} "
+}*/

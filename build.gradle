@@ -1,5 +1,11 @@
 // Top-level build file where you can add configuration options common to all sub-projects/modules.
 
+ext{
+    // ----- 应用内配置 ----- //
+    versionName = "2.0"
+    versionCode = 3
+}
+
 buildscript {
     repositories {
         //maven { url uri('./repo') }

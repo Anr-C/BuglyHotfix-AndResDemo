@@ -17,7 +17,7 @@ rootProject.ext {
     autoBakPath = file("${buildDir}/bakApk/")
 
     //此处填写每次需要进行补丁构建的基准包目录
-    baseDir = "${rootDir}/out/some-app_2.0_3_20201205211902"
+    baseDir = "${rootDir}/out/some-app_2.0_3_20201207222348"
     //用于指定新基准包 不使用编译时生成的基准包（tinker 每次任务都会重新生成一个）
     newApk = ""
 
@@ -32,19 +32,28 @@ rootProject.ext {
     baseApkPath = ""
     baseApkResourceMappingPath = ""
     baseApkProguardMappingPath = ""
+    tinkerId = ""
+    outputDateStr = ""
+}
+
+
+/**
+ * 用于记录 tinkerid 判断版本
+ * bugly并未提供相关查询接口，需要自行保存
+ */
+task generateTinkerIdValue() {
+    rootProject.ext.outputDateStr = new Date().format("yyyyMMddHHmmss", TimeZone.getTimeZone("GMT+08:00"))
+    rootProject.ext.tinkerId = "${versionName}_${versionCode}_${rootProject.ext.outputDateStr}"
+    println("====>" + rootProject.ext.tinkerId)
 }
 
 android {
     applicationVariants.all { variant ->
         variant.outputs.forEach {
-            def outputFileName = "${apkName}_${variant.versionName}_${variant.versionCode}_${apkOutTime()}"
+            def outputFileName = "${apkName}_${variant.versionName}_${variant.versionCode}_${rootProject.ext.outputDateStr}"
             println("===>" + outputFileName)
             rootProject.ext.outputFileName = outputFileName
             it.apkData.outputFileName = outputFileName + ".apk"
         }
     }
-}
-
-static def apkOutTime() {
-    return new Date().format("yyyyMMddHHmmss", TimeZone.getTimeZone("GMT+08:00"))
 }
