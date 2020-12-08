@@ -21,7 +21,11 @@ def fillBaseApkPath() {
         println "baseDir not found error, return."
         return
     }
-
+    if (!file(baseDir).exists()) {
+        println "baseDir not found error, return."
+        rootProject.ext.baseDir = ''
+        return
+    }
     rootProject.ext.baseApkProguardMappingPath = "${rootProject.ext.baseDir}/mapping.txt"
     def outDirResGuard = file(rootProject.ext.baseDir)
     println "fillBaseApkPath ===> ${outDirResGuard} ${outDirResGuard.isDirectory()}"
@@ -46,8 +50,14 @@ def fillNewApkPath() {
         println "newApk not found error, return."
         return
     }
-    if (file(newApk).isDirectory()) {
-        def newApkPath = subFix + "${newApk}/${newApk}-resguard.apk"
+    def newApkFile = file(newApk)
+    if (!newApkFile.exists()) {
+        println "newApk not found error, return."
+        rootProject.ext.newApk = ''
+        return
+    }
+    if (newApkFile.isDirectory()) {
+        def newApkPath = newApkFile.absolutePath + "/${newApkFile.name}-resguard.apk"
         rootProject.ext.newApk = newApkPath
         println "newApkPath ==>> ${rootProject.ext.newApk}"
     }
