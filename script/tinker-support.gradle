@@ -61,7 +61,7 @@ def fillNewApkPath() {
         rootProject.ext.newApk = newApkPath
         println "newApkPath ==>> ${rootProject.ext.newApk}"
     }
-    if (newApk.endsWith(".apk")) {
+    if ("${rootProject.ext.newApk}".endsWith(".apk")) {
         println "newApkPath ==>> ${rootProject.ext.newApk}"
     } else {
         println "newApk not found error ==>> ${rootProject.ext.newApk}"
