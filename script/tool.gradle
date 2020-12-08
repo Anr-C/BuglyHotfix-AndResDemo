@@ -37,7 +37,7 @@ if (project.hasProperty('command')) {
     /**
      * 单独打补丁
      */
-    task patchSingle(dependsOn: ['clean', 'buildTinkerPatchRelease']) {
+    task patchSingle(group: 'tinker-patch', dependsOn: ['clean', 'buildTinkerPatchRelease']) {
         rootProject.ext.baseDir = baseDir
         rootProject.ext.newApk = newApkPath
         println "===>start baseDir:${baseDir} newApkPath:${newApkPath} "
@@ -46,7 +46,7 @@ if (project.hasProperty('command')) {
     /**
      * 生成多个补丁
      */
-    task patchMulti(type: Exec) {
+    task patchMulti(group: 'tinker-patch', type: Exec) {
         workingDir "${projectDir}/"
         commandLine "python", "tinker-patch.py", "-d", "$baseDir", "-n", "$newApkPath"
     }
