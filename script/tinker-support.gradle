@@ -16,9 +16,15 @@ android {
 }
 
 def fillBaseApkPath() {
+    String baseDir = rootProject.ext.baseDir
+    if (baseDir.isEmpty()) {
+        println "baseDir not found error, return."
+        return
+    }
+
     rootProject.ext.baseApkProguardMappingPath = "${rootProject.ext.baseDir}/mapping.txt"
-    def outDirResGuard = new File("${rootProject.ext.baseDir}")
-    println "==>> ${outDirResGuard} ${outDirResGuard.isDirectory()}"
+    def outDirResGuard = file(rootProject.ext.baseDir)
+    println "fillBaseApkPath ===> ${outDirResGuard} ${outDirResGuard.isDirectory()}"
     if (outDirResGuard.isDirectory()) {
         outDirResGuard.eachFileRecurse { file ->
             if (file.name.endsWith(".apk")) {
@@ -27,12 +33,29 @@ def fillBaseApkPath() {
             if (file.name.endsWith("R.txt")) {
                 rootProject.ext.baseApkResourceMappingPath = "${outDirResGuard}/${file.name}"
             }
-                println "baseApkProguardMappingPath ==>> ${file}"
         }
     }
-//    println "baseApkProguardMappingPath ==>> ${rootProject.ext.baseApkProguardMappingPath}"
-//    println "baseApkPath ==>> ${rootProject.ext.baseApkPath}"
-//    println "baseApkResourceMappingPath ==>> ${rootProject.ext.baseApkResourceMappingPath}"
+    println "baseApkPath ===> ${rootProject.ext.baseApkPath}"
+    println "baseApkProguardMappingPath ===> ${rootProject.ext.baseApkProguardMappingPath}"
+    println "baseApkResourceMappingPath ===> ${rootProject.ext.baseApkResourceMappingPath}"
+}
+
+def fillNewApkPath() {
+    String newApk = rootProject.ext.newApk
+    if (newApk.isEmpty()) {
+        println "newApk not found error, return."
+        return
+    }
+    if (file(newApk).isDirectory()) {
+        def newApkPath = subFix + "${newApk}/${newApk}-resguard.apk"
+        rootProject.ext.newApk = newApkPath
+        println "newApkPath ==>> ${rootProject.ext.newApk}"
+    }
+    if (newApk.endsWith(".apk")) {
+        println "newApkPath ==>> ${rootProject.ext.newApk}"
+    } else {
+        println "newApk not found error ==>> ${rootProject.ext.newApk}"
+    }
 }
 
 /**
@@ -59,6 +82,7 @@ tinkerSupport {
 
     // 文件匹配
     fillBaseApkPath()
+    fillNewApkPath()
 
     // 编译补丁包时，必需指定基线版本的apk，默认值为空
     // 如果为空，则表示不是进行补丁包的编译

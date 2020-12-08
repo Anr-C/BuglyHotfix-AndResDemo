@@ -39,11 +39,13 @@ if (project.hasProperty('command')) {
         def newApk = "some_app_new"
         def subFix = "E:/test/pkg/"
 
-        def baseDir = subFix + baseApk
-        def newApkPath = subFix + "${newApk}/${newApk}-resguard.apk"
-        if (baseDir == null) return
+//        def baseDir = subFix + baseApk
+//        def newApkPath = subFix + newApk
+        def baseDir = ""
+        def newApkPath = ""
+
         rootProject.ext.baseDir = baseDir
-        rootProject.ext.newApk = newApkPath == null ? "" : newApkPath
+        rootProject.ext.newApk = newApkPath
         println "===>start baseDir:${baseDir} newApkPath:${newApkPath} "
     }
 
