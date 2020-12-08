@@ -5,7 +5,7 @@
 /**
  * 打包并混淆
  */
-task releaseAndResGuard(group: 'release', description: 'release and resguard',dependsOn: ['clean', 'resguardRelease'] ){
+task releaseAndResGuard(group: 'release', description: 'release and resguard', dependsOn: ['clean', 'resguardRelease']) {
 
     doFirst {
         //do something
@@ -17,27 +17,34 @@ task releaseAndResGuard(group: 'release', description: 'release and resguard',de
 }
 
 
-/**
- * 命令行批量打补丁 项目根目录/tinker-patch.py
- */
-task initDir {
-    def baseDir = project.getProperties().get('multiApkDir')
-    def newApkPath = project.getProperties().get('newApkPath')
-    if (baseDir == null) return
-    rootProject.ext.baseDir = baseDir
-    rootProject.ext.newApk = newApkPath == null ? "" : newApkPath
-    println "===>start baseDir:${baseDir} newApkPath:${newApkPath} "
+if (project.hasProperty('command')) {
+    /**
+     * 命令行批量打补丁 项目根目录/tinker-patch.py
+     */
+    task initDir() {
+        def baseDir = project.getProperties().get('multiApkDir')
+        def newApkPath = project.getProperties().get('newApkPath')
+        if (baseDir == null) return
+        rootProject.ext.baseDir = baseDir
+        rootProject.ext.newApk = newApkPath == null ? "" : newApkPath
+        println "===>start baseDir:${baseDir} newApkPath:${newApkPath} "
+    }
+} else {
+    /**
+     * 单独打补丁
+     */
+    task patchSingle(dependsOn: ['clean', 'buildTinkerPatchRelease']) {
+        //配置项
+        def baseApk = "some_app_old"
+        def newApk = "some_app_new"
+        def subFix = "E:/test/pkg/"
+
+        def baseDir = subFix + baseApk
+        def newApkPath = subFix + "${newApk}/${newApk}-resguard.apk"
+        if (baseDir == null) return
+        rootProject.ext.baseDir = baseDir
+        rootProject.ext.newApk = newApkPath == null ? "" : newApkPath
+        println "===>start baseDir:${baseDir} newApkPath:${newApkPath} "
+    }
+
 }
-
-/*task patchSingle(dependsOn: ['clean', 'buildTinkerPatchRelease']) {
-    def baseApk="some_app_old"
-    def newApk ="some_app_new"
-    def subFix = "E:/test/pkg/"
-
-    def baseDir = subFix + baseApk
-    def newApkPath = subFix+"${newApk}/${newApk}-resguard.apk"
-    if (baseDir == null) return
-    rootProject.ext.baseDir = baseDir
-    rootProject.ext.newApk = newApkPath == null ? "" : newApkPath
-    println "===>start baseDir:${baseDir} newApkPath:${newApkPath} "
-}*/

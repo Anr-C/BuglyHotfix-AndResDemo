@@ -30,9 +30,9 @@ def get_prop(argv):
 
 def release_patch(old_path):
     if platform.system() == "Windows":
-        cmd_head = "gradlew.bat"
+        cmd_head = "gradlew.bat -Pcommand"
     else:
-        cmd_head = "./gradlew"
+        cmd_head = "./gradlew -Pcommand"
     if new_apk == '':
         patch_cmd = cmd_head + ' app:initDir -PmultiApkDir=' + old_path + ' app:buildTinkerPatchRelease'  # --info
     else:

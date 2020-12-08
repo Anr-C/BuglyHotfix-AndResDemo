@@ -1,6 +1,6 @@
 // Top-level build file where you can add configuration options common to all sub-projects/modules.
 
-ext{
+rootProject.ext{
     // ----- 应用内配置 ----- //
     versionName = "2.0"
     versionCode = 3
